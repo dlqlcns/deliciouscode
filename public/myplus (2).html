@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>맛있는 코드 - 재료등록</title>
+  
+  <link rel="stylesheet" href="./page.css" />
+  <link rel="stylesheet" href="./myplus.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white">
+<header class="common-header">
+  <div class="header-container">
+    <div class="header-top">
+      <button class="header-link" onclick="location.href='./login.html'">로그인 / 회원가입</button>
+    </div>
+    <div class="header-main">
+      <div class="logo" onclick="location.href='./index.html'">
+        <img src="./아이콘/logo.png" alt="맛있는 코드" class="logo-image" />
+      </div>
+      
+      <div class="search-container">
+        <input 
+          id="headerSearchInput" 
+          type="search" 
+          placeholder="검색어를 입력하세요"
+          class="search-input"
+        />
+        <img
+          id="headerSearchIcon"
+          src="./아이콘/search.png"
+          alt="검색"
+          onclick="handleSearch()"
+          class="search-icon"
+        />
+      </div>
+      
+      <nav class="nav-menu">
+        <button class="nav-button" onclick="location.href='./recipe_all.html'">레시피</button>
+        <div class="nav-divider"></div>
+        <button class="nav-button" onclick="location.href='./myplus.html'">재료등록</button>
+      </nav>
+      
+      <div class="header-icons">
+        <img
+          src="./아이콘/mypage.png"
+          alt="마이페이지"
+          onclick="location.href='mypage.html'"
+          class="icon-image"
+        />
+        <img
+          src="./아이콘/bookmark.png"
+          alt="북마크"
+          onclick="location.href='./my_fav.html'"
+          class="icon-image"
+        />
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="title-group">
+    <h1 class="title">보유 재료 관리</h1>
+    <p class="subtitle">냉장고에 있는 재료를 등록하고 관리하세요</p>
+  </div>
+
+  <!-- ADD INGREDIENT -->
+  <div class="card">
+    <div class="card-content">
+      <div class="section-header">
+        <h2>재료 추가</h2>
+        <p>보유하고 있는 재료를 추가해주세요</p>
+      </div>
+
+      <div class="add-row">
+        <input class="input" placeholder="재료 이름을 입력하세요" />
+        <select class="select">
+          <option value="기타">기타</option>
+          <option value="채소류">채소류</option>
+          <option value="육류">육류</option>
+          <option value="유제품">유제품</option>
+          <option value="곡물류">곡물류</option>
+        </select>
+        <button class="btn-add">＋ 추가</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INGREDIENT LIST -->
+  <div class="card">
+    <div class="card-content">
+      <div class="section-header">
+        <h2>보유 재료 목록</h2>
+        <p>총 0개의 재료가 등록되어 있습니다</p> <!-- 초기값 0 -->
+      </div>
+
+      <div class="ingredient-section">
+        <!-- 채소류 -->
+        <div class="category">
+          <h3>채소류</h3>
+          <div class="badge-wrap">
+            <div class="badge">
+              양파 <span class="badge-close">×</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 육류 -->
+        <div class="category">
+          <h3>육류</h3>
+          <div class="badge-wrap">
+            <div class="badge">
+              돼지고기 <span class="badge-close">×</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 유제품 -->
+        <div class="category">
+          <h3>유제품</h3>
+          <div class="badge-wrap">
+            <div class="badge">
+              우유 <span class="badge-close">×</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 곡물류 -->
+        <div class="category">
+          <h3>곡물류</h3>
+          <div class="badge-wrap">
+            <div class="badge">
+              쌀 <span class="badge-close">×</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-wrap">
+    <button class="btn-save">저장하기</button>
+  </div>
+</main>
+
+<!-- JS는 반드시 body 내부 끝에 -->
+<script src="./myplus.js"></script>
+</body>
+</html>

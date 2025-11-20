@@ -1,0 +1,296 @@
+/* 기본 설정 */
+body {
+  margin: 0;
+  font-family: 'Nanum Gothic', sans-serif;
+  background-color: #f7f7f7; 
+  min-width: 1440px; 
+  min-height: 900px; 
+}
+
+/* login.html과 동일한 헤더 스타일 */
+.login-header {
+  background-color: white;
+  border-bottom: 1px solid #cacaca;
+  animation: fade-in 0.5s ease-in-out forwards;
+  transform: translateY(-1rem);
+  opacity: 0;
+}
+
+.login-nav {
+  position: relative;
+  height: 85px;
+  border-bottom: 1px solid #cacaca;
+  background-color: white;
+}
+
+.nav-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login-logo {
+  width: 120px;
+  height: auto;
+  display: block;
+}
+
+.nav-right {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 4px 5px;
+  background: white;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #393939;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  background: #3459ff;
+  color: white;
+}
+
+.vertical-divider {
+  width: 1px;
+  height: 12px;
+  background-color: #cacaca;
+  margin: 0 6px;
+}
+
+/* 회원가입 폼 컨테이너 */
+.join-container {
+  width: 100%;
+  min-height: calc(100vh - 300px);
+  background-color: #f9fafb; 
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 4rem 1rem;
+}
+
+/* 회원가입 폼 */
+.join-form {
+  width: 100%;
+  max-width: 720px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  animation: fade-in 0.5s ease-in-out forwards;
+  transform: translateY(-1rem);
+  opacity: 0;
+  animation-delay: 0.2s;
+}
+
+.join-title {
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #393939;
+}
+
+/* 🎯 form-group 간격 통일을 위해 gap 제거 또는 0으로 설정 */
+.join-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* gap을 0으로 설정하거나 이 속성 자체를 제거합니다. */
+}
+
+/* 🎯 모든 form-group에 통일된 하단 마진 적용 */
+.form-group {
+    margin-bottom: 1.5rem; /* 통일된 간격을 위해 1.5rem으로 설정 */
+}
+
+.form-group:last-child {
+    margin-bottom: 0; /* join-section의 마지막 form-group은 마진 제거 */
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem; 
+  display: block; 
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem; /* 섹션 타이틀 아래 여백 확보 */
+  color: #393939;
+}
+
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+/* ============================================================= */
+/* 🎯 find.html의 .form-input 스타일에 맞춰 수정된 부분 */
+/* ============================================================= */
+.input-field {
+  flex: 1;
+  width: 100%;
+  height: 54px; /* 54px로 변경 */
+  padding: 0 16px; /* 0 16px로 변경 */
+  border: 1px solid #e5e7eb; /* #e5e7eb로 변경 */
+  border-radius: 8px; /* 8px로 변경 */
+  font-size: 14px;
+  color: #393939; /* 추가 */
+  font-family: 'Nanum Gothic', sans-serif;
+  background-color: #f5f5f5; /* #f5f5f5로 변경 */
+  box-sizing: border-box; 
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #3459ff;
+  background-color: white; /* 포커스 시 배경색 흰색으로 변경 */
+}
+/* ============================================================= */
+/* 🎯 find.html의 .form-input 스타일에 맞춰 수정된 부분 끝 */
+/* ============================================================= */
+
+.input-field.error {
+  border-color: #ef4444; 
+}
+
+/* 버튼 높이 48px 통일 */
+.check-btn,
+.add-btn {
+  height: 48px; 
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.check-btn:hover,
+.add-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.checkbox-grid {
+  /* 1. 알레르기/선호 카테고리는 가로줄에 4개씩 배치 */
+  grid-template-columns: repeat(4, 1fr);
+  display: grid;
+  gap: 0.5rem 1rem;
+  font-size: 14px;
+  color: #444;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox-grid input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* 겹침 문제 해결: 음수 마진 제거 및 양수 마진 추가 */
+.hint-text {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 0.25rem; 
+  margin-bottom: 0.5rem; /* 힌트 텍스트와 다음 요소 간의 여백을 위해 추가 */
+}
+
+/* 3. 메시지 영역 스타일: 동적으로 삽입되므로 min-height 제거 */
+.check-message,
+.password-confirm-message {
+  font-size: 13px;
+  margin-top: 0.25rem; 
+  /* min-height 속성은 제거되어, 메시지가 없을 때는 높이를 차지하지 않습니다. */
+}
+
+/* 비밀번호 일치 시 사용할 초록색 메시지 스타일 */
+.valid-message {
+  color: #16a34a !important;
+  font-weight: 600;
+}
+
+.submit-btn {
+  height: 48px; 
+  background-color: #3459ff;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.submit-btn:hover {
+  background-color: #2347dd;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* 애니메이션 */
+@keyframes fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 미디어 쿼리 (join_v2.css 반영) */
+@media (max-width: 768px) {
+  
+  .join-form {
+    padding: 2rem 1.5rem;
+  }
+  
+  .join-title {
+    font-size: 24px;
+  }
+  
+  .input-row {
+    flex-direction: column;
+  }
+  
+  .check-btn,
+  .add-btn {
+    width: 100%;
+  }
+  
+  .checkbox-grid {
+    /* 모바일에서는 2개씩 배치 유지 */
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}

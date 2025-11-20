@@ -1,0 +1,200 @@
+/* 메인 컨테이너 */
+.my_fav-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 헤더 */
+.my_fav-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.my_fav-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111;
+}
+.my_fav-subtitle {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+}
+
+/* 🎨 [수정] search-container 스타일 변경에 따라 수정 */
+.search-and-filter {
+  display: flex;
+  justify-content: space-between; /* 검색창과 필터/정렬 박스 간격을 둠 */
+  align-items: center;
+  gap: 1rem;
+}
+
+/* 🎨 [추가] 즐겨찾기 페이지의 검색 컨테이너 스타일 */
+.search-and-filter > .search-container { 
+  max-width: 437px; /* page.css의 헤더 max-width를 사용 */
+  flex: 1; /* 남은 공간을 차지하도록 */
+  margin: 0; 
+  position: relative;
+}
+
+/* 🎨 [추가] 필터/정렬 박스 컨테이너 */
+.filter-sort-bar {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0; /* 너비가 줄어들지 않도록 고정 */
+}
+
+/* ❌ [삭제/주석 처리] page.css와 스타일 통일을 위해 아래 코드는 삭제하거나 사용하지 않습니다. */
+/*
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 70%;
+  max-width: 1000px;
+}
+.search-icon-btn { ... }
+.search-icon-btn img { ... }
+.search-input { ... }
+*/
+
+/* 선택 박스 (기존 스타일 유지) */
+.select-box {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: white;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%236b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  padding-right: 2rem;
+}
+
+/* 레시피 그리드 */
+.recipe-list.grid-view {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+  padding: 0;
+}
+
+/* 레시피 카드 */
+.recipe-res-block {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  cursor: pointer;
+}
+.recipe-res-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+
+/* 이미지 영역 */
+.recipe-image-box {
+  width: 100%;
+  height: 200px;
+  background-color: #f0f0f0;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+/* 하트 버튼 */
+.bookmark-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  color: #ff6b81;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s;
+  z-index: 10;
+}
+.bookmark-btn:hover {
+  transform: scale(1.1);
+}
+.bookmark-btn.bookmarked {
+  color: #ff3d5c;
+  background: rgba(255,61,92,0.15);
+}
+
+/* 콘텐츠 영역 */
+.recipe-content {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.recipe-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+  line-height: 1.4;
+}
+.recipe-category {
+  font-size: 12px;
+  color: #111;
+  font-weight: 400;
+  background: #f1f2f4;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  max-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recipe-desc-short {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  height: 2.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.recipe-time {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 14px;
+  color: #999;
+  margin-top: 0.5rem;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .recipe-list.grid-view {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+}
+@media (max-width: 480px) {
+  .recipe-list.grid-view {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}

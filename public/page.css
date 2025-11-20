@@ -1,0 +1,348 @@
+/* ============================================ */
+/* page.css - 공통 스타일만 포함 */
+/* ============================================ */
+
+/* Reset & Global Styles */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
+@import url("https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800|Roboto:400");
+
+* {
+  -webkit-font-smoothing: antialiased;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0px;
+  height: 100%;
+}
+
+/* Generic focus style */
+button:focus-visible {
+  outline: 2px solid #4a90e2 !important;
+  outline: -webkit-focus-ring-color auto 5px !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ============================================ */
+/* 헤더 공통 스타일 */
+/* ============================================ */
+
+.common-header {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.header-top {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+  color: #aaaaaa;
+}
+
+.header-link {
+  background: none;
+  border: none;
+  color: #aaaaaa;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.header-link:hover {
+  color: #4b5563;
+}
+
+.header-divider {
+  width: 1px;
+  height: 12px;
+  background-color: #d1d5db;
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 0;
+  gap: 1.5rem;
+}
+
+.logo {
+  /* [수정 반영] 헤더 로고 컨테이너의 크기 */
+  width: 122px;
+  height: 40px; 
+  cursor: pointer;
+  /* object-fit: contain; 제거 */
+  flex-shrink: 0;
+}
+
+.logo-image {
+  /* [추가 반영] img 요소에 대한 스타일 */
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; /* 원본 비율 유지하면서 컨테이너에 맞춤 */
+}
+
+.search-container {
+  flex: 1;
+  max-width: 437px;
+  margin: 0;
+  margin-right: auto;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  height: 42px;
+  background-color: #ededed;
+  border-radius: 20px;
+  padding: 0 3rem 0 1rem;
+  border: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3459ff;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.search-icon:hover {
+  opacity: 0.8;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 14px;
+  color: #393939;
+  flex-shrink: 0;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.nav-button:hover {
+  background-color: #f3f4f6;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 12px;
+  background-color: #d1d5db;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.icon-image {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* ============================================ */
+/* 푸터 공통 스타일 */
+/* ============================================ */
+
+.common-footer {
+  width: 100%;
+  background-color: transparent;
+  /* [수정 반영] 내부 .footer-content에서 padding을 처리하도록 수정 */
+  padding: 2rem 0; 
+  margin-top: 4rem;
+}
+
+.footer-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.footer-content {
+  /* [수정 반영] 최대 너비 지정 및 양옆 패딩 추가 */
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.footer-top {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  /* [추가 반영] 푸터 로고 스타일 (헤더 로고보다 작음) */
+  width: 100px;
+  height: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.footer-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 12px;
+  color: #858585;
+  flex-wrap: wrap;
+  /* [수정 반영] 로고와 링크 사이 간격 */
+  margin-left: 0.5rem;
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: #858585;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: #666666;
+}
+
+.footer-nav-divider {
+  height: 12px;
+  width: 1px;
+  background-color: #e5e7eb;
+}
+
+.footer-info {
+  font-size: 12px;
+  color: #858585;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ============================================ */
+/* 반응형 (추가/수정) */
+/* ============================================ */
+
+@media (max-width: 1200px) {
+  .header-container {
+    padding: 0 1rem;
+  }
+  
+  .search-container {
+    max-width: 300px;
+  }
+  
+  .nav-menu {
+    gap: 0.5rem;
+  }
+  
+  .header-icons {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-main {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 0; 
+  }
+  
+  .logo {
+    /* [수정 반영] 반응형 로고 컨테이너 높이 */
+    width: 100px; 
+    height: 38px;
+  }
+  
+  .header-top {
+      padding: 0.25rem 0;
+  }
+  
+  .search-container {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+  }
+  
+  .nav-menu {
+    font-size: 12px;
+  }
+  
+  .icon-image {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .footer-content {
+    /* [수정 반영] 모바일 푸터 패딩 */
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-main {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .logo {
+    margin-bottom: 0.5rem;
+  }
+  
+  .nav-menu {
+    width: 100%;
+    justify-content: space-around;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 0.5rem;
+  }
+  
+  .nav-divider {
+    display: none;
+  }
+  
+  .header-icons {
+    position: absolute; 
+    right: 1rem;
+    top: 0.75rem;
+  }
+}
