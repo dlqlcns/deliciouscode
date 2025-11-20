@@ -1,9 +1,8 @@
 {
-  "name": "recipe-project",
+  "name": "deliciouscode",
   "version": "1.0.0",
-  "description": "맛있는 코드 웹 프로젝트",
-  "main": "app.js",
   "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node app.js"
   },
