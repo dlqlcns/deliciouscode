@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient.js'
 
+// 로그인된 사용자의 즐겨찾기 레시피 ID 목록
 export const getFavoriteRecipeIds = async (req, res) => {
   try {
     const userId = req.userId
@@ -21,6 +22,7 @@ export const getFavoriteRecipeIds = async (req, res) => {
   }
 }
 
+// 즐겨찾기 추가
 export const addFavorite = async (req, res) => {
   try {
     const userId = req.userId
@@ -46,6 +48,7 @@ export const addFavorite = async (req, res) => {
   }
 }
 
+// 즐겨찾기 삭제
 export const removeFavorite = async (req, res) => {
   try {
     const userId = req.userId
@@ -73,6 +76,7 @@ export const removeFavorite = async (req, res) => {
   }
 }
 
+// 특정 유저의 즐겨찾기 목록 (userId로 조회)
 export const getUserFavorites = async (req, res) => {
   try {
     const { userId } = req.params
