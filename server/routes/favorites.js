@@ -60,4 +60,18 @@ router.delete('/', auth, async (req, res) => {
   res.json({ message: '즐겨찾기 삭제됨' })
 })
 
+router.get('/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  const { data, error } = await supabase
+    .from('favorites')
+    .select('recipe_id')
+    .eq('user_id', userId);
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  const recipeIds = data.map(fav => fav.recipe_id);
+  res.json(recipeIds);
+});
+
 export default router
