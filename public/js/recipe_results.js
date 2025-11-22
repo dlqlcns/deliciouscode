@@ -8,6 +8,16 @@ let currentRecipes = [];
 const recipeList = document.getElementById("recipeList");
 const headerSearchInput = document.getElementById("headerSearchInput");
 
+const getUserAllergies = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return Array.isArray(user?.allergies) ? user.allergies : [];
+  } catch (e) {
+    console.warn("알레르기 정보를 불러오지 못했습니다:", e);
+    return [];
+  }
+};
+
 // ============================================
 // AI 서버에서 레시피 목록 불러오기
 // ============================================
@@ -25,7 +35,7 @@ async function fetchAIRecipes() {
     const res = await fetch("/api/ai/list", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients }),
+      body: JSON.stringify({ ingredients, allergies: getUserAllergies() }),
     });
 
     if (!res.ok) throw new Error("AI 레시피 목록을 불러오지 못했습니다.");
@@ -53,7 +63,7 @@ async function fetchAIDetail(name) {
     const res = await fetch("/api/ai/detail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, allergies: getUserAllergies() }),
     });
 
     if (!res.ok) throw new Error("AI 레시피 상세정보 불러오기 실패");

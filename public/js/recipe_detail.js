@@ -3,12 +3,22 @@
 // ============================================
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const getUserAllergies = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      return Array.isArray(user?.allergies) ? user.allergies : [];
+    } catch (e) {
+      console.warn("알레르기 정보를 불러오지 못했습니다:", e);
+      return [];
+    }
+  };
+
   async function fetchAIDetail(name) {
     try {
       const res = await fetch("/api/ai/detail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name, allergies: getUserAllergies() }),
       });
       if (!res.ok) throw new Error("AI 상세 레시피 불러오기 실패");
       return await res.json();
