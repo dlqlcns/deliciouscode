@@ -13,3 +13,5 @@ router.get('/', auth, getFavoriteRecipeIds)
 router.post('/', auth, addFavorite)
 router.delete('/', auth, removeFavorite)
 router.get('/:userId', getUserFavorites)
+
+export default router
