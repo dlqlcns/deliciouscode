@@ -1,6 +1,5 @@
 import { supabase } from '../supabaseClient.js'
 
-// 📌 추천 레시피 가져오기
 export const getRecommendedRecipes = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -21,105 +20,78 @@ export const getRecommendedRecipes = async (req, res) => {
   }
 }
 
-// 📌 전체 레시피 가져오기
 export const getAllRecipes = async (req, res) => {
   try {
+    const {
+      query: searchTerm = '',
+      ingredients = '',
+      exclude = '',
+      category = '전체',
+      sort = '최신 등록순'
+    } = req.query
+
     const { data, error } = await supabase
       .from('recipes')
-      .select('id, name, category, time, image_url')
+      .select('id, name, category, time, image_url, ingredients, description, instructions')
 
     if (error) {
       console.error('recipes: failed to fetch all', error)
       return res.status(500).json({ error: error.message })
     }
 
-    res.json(data)
+    const searchTerms = searchTerm
+      .split(',')
+      .map(term => term.trim())
+      .filter(Boolean)
+
+    const includeIngredients = ingredients
+      .split(',')
+      .map(term => term.trim())
+      .filter(Boolean)
+
+    const excludeIngredients = exclude
+      .split(',')
+      .map(term => term.trim())
+      .filter(Boolean)
+
+    const filtered = (data || [])
+      .filter(recipe => {
+        if (!recipe || !recipe.id) return false
+
+        const haystack = `${recipe.name} ${recipe.description || ''} ${recipe.ingredients || ''}`.toLowerCase()
+
+        if (category && category !== '전체' && recipe.category !== category) return false
+
+        if (searchTerms.length && !searchTerms.every(term => haystack.includes(term.toLowerCase()))) return false
+
+        if (includeIngredients.length && !includeIngredients.every(term => haystack.includes(term.toLowerCase()))) return false
+
+        if (excludeIngredients.length && excludeIngredients.some(term => haystack.includes(term.toLowerCase()))) return false
+
+        return true
+      })
+      .map(recipe => ({
+        ...recipe,
+        image: recipe.image_url,
+        description: recipe.description || recipe.instructions || ''
+      }))
+
+    filtered.sort((a, b) => {
+      switch (sort) {
+        case '이름순':
+          return a.name.localeCompare(b.name)
+        case '조리 시간순':
+          return parseInt(a.time) - parseInt(b.time)
+        case '최신순':
+        case '최신 등록순':
+        default:
+          return b.id - a.id
+      }
+    })
+
+    res.json(filtered)
   } catch (err) {
     console.error('recipes: unexpected error fetching all', err)
-    res.status(500).json({ error: '서버 오류가 발생했습니다.' })
-  }
-}
-
-// ✅ 레시피 상세 조회
-export const getRecipeById = async (req, res) => {
-  try {
-    const { id } = req.params
-
-    const { data, error } = await supabase
-      .from('recipes')
-      .select('id, name, description, category, time, image_url, ingredients, steps')
-      .eq('id', id)
-      .single()
-
-    if (error || !data) {
-      console.error('recipes: failed to fetch detail', error)
-      return res.status(404).json({ error: '레시피를 찾을 수 없습니다.' })
-    }
-
-    res.json(data)
-  } catch (err) {
-    console.error('recipes: unexpected error fetching detail', err)
-    res.status(500).json({ error: '서버 오류가 발생했습니다.' })
-  }
-}
-
-// ✅ 검색/필터/정렬 API
-export const searchRecipes = async (req, res) => {
-  try {
-    const { query = '', ingredients = '', exclude = '', category = '', sort = '최신순' } = req.query
-
-    let request = supabase
-      .from('recipes')
-      .select('id, name, description, category, time, image_url')
-
-    // 검색어
-    if (query) {
-      request = request.ilike('name', `%${query}%`)
-    }
-
-    // 재료 포함 검색
-    if (ingredients) {
-      const list = ingredients.split(',').map(i => i.trim())
-      request = request.or(list.map(i => `description.ilike.%${i}%`).join(','))
-    }
-
-    // 제외 재료
-    if (exclude) {
-      const excluded = exclude.split(',').map(e => e.trim())
-      excluded.forEach(term => {
-        request = request.not('description', 'ilike', `%${term}%`)
-      })
-    }
-
-    // 카테고리 필터
-    if (category && category !== '전체') {
-      request = request.eq('category', category)
-    }
-
-    // 정렬
-    switch (sort) {
-      case '이름순':
-        request = request.order('name', { ascending: true })
-        break
-      case '조리 시간순':
-        request = request.order('time', { ascending: true })
-        break
-      case '최신순':
-      default:
-        request = request.order('id', { ascending: false })
-        break
-    }
-
-    const { data, error } = await request
-
-    if (error) {
-      console.error('recipes: search failed', error)
-      return res.status(500).json({ error: error.message })
-    }
-
-    res.json(data)
-  } catch (err) {
-    console.error('recipes: search unexpected error', err)
     res.status(500).json({ error: '서버 오류가 발생했습니다.' })
   }
 }
