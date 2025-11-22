@@ -62,3 +62,64 @@ export const getRecipeById = async (req, res) => {
     res.status(500).json({ error: '서버 오류가 발생했습니다.' })
   }
 }
+
+// ✅ 검색/필터/정렬 API
+export const searchRecipes = async (req, res) => {
+  try {
+    const { query = '', ingredients = '', exclude = '', category = '', sort = '최신순' } = req.query
+
+    let request = supabase
+      .from('recipes')
+      .select('id, name, description, category, time, image_url')
+
+    // 검색어
+    if (query) {
+      request = request.ilike('name', `%${query}%`)
+    }
+
+    // 재료 포함 검색
+    if (ingredients) {
+      const list = ingredients.split(',').map(i => i.trim())
+      request = request.or(list.map(i => `description.ilike.%${i}%`).join(','))
+    }
+
+    // 제외 재료
+    if (exclude) {
+      const excluded = exclude.split(',').map(e => e.trim())
+      excluded.forEach(term => {
+        request = request.not('description', 'ilike', `%${term}%`)
+      })
+    }
+
+    // 카테고리 필터
+    if (category && category !== '전체') {
+      request = request.eq('category', category)
+    }
+
+    // 정렬
+    switch (sort) {
+      case '이름순':
+        request = request.order('name', { ascending: true })
+        break
+      case '조리 시간순':
+        request = request.order('time', { ascending: true })
+        break
+      case '최신순':
+      default:
+        request = request.order('id', { ascending: false })
+        break
+    }
+
+    const { data, error } = await request
+
+    if (error) {
+      console.error('recipes: search failed', error)
+      return res.status(500).json({ error: error.message })
+    }
+
+    res.json(data)
+  } catch (err) {
+    console.error('recipes: search unexpected error', err)
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' })
+  }
+}
