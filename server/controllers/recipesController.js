@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient.js'
 
+// 📌 추천 레시피 가져오기
 export const getRecommendedRecipes = async (req, res) => {
   try {
     const { data, error } = await supabase
@@ -20,6 +21,7 @@ export const getRecommendedRecipes = async (req, res) => {
   }
 }
 
+// 📌 전체 레시피 가져오기
 export const getAllRecipes = async (req, res) => {
   try {
     const { data, error } = await supabase
