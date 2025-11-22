@@ -2,11 +2,12 @@
   "name": "deliciouscode",
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node src/app.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "@supabase/supabase-js": "^2.7.0"
   }
 }
