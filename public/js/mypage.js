@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // 사용자 정보 불러오기
   const resUser = await fetch(`/api/users/${userId}`);
+  if (!resUser.ok) {
+    alert('사용자 정보를 불러올 수 없습니다.');
+    return;
+  }
   const user = await resUser.json();
 
   if (user?.username) {
