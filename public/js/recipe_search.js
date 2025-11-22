@@ -1,32 +1,25 @@
 // ============================================
-// recipe_search.js - AI 기반 검색 페이지
+// recipe_search.js - 검색 페이지 (DB 연동)
 // ============================================
 
-document.addEventListener("DOMContentLoaded", () => {
-  const searchButton = document.getElementById("searchButton");
-  const ingredientInput = document.getElementById("ingredientInput");
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('searchInput');
+  const searchButton = document.getElementById('searchButton');
 
-  // Enter 키로 검색
-  ingredientInput.addEventListener("keypress", e => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchButton.click();
-    }
-  });
-
-  // 검색 버튼 클릭 시 -> recipe_results.html로 이동
-  searchButton.addEventListener("click", () => {
-    const ingredients = ingredientInput.value
-      .split(",")
-      .map(i => i.trim())
-      .filter(Boolean);
-
-    if (ingredients.length === 0) {
-      alert("재료를 하나 이상 입력해주세요!");
+  function performSearch() {
+    const query = searchInput.value.trim();
+    if (!query) {
+      alert('검색어를 입력하세요!');
       return;
     }
+    const ingredients = query.replace(/\s+/g, ',');
+    window.location.href = `recipe_results.html?ingredients=${encodeURIComponent(ingredients)}`;
+  }
 
-    const query = encodeURIComponent(ingredients.join(","));
-    window.location.href = `recipe_results.html?ingredients=${query}`;
-  });
+  if (searchButton) searchButton.addEventListener('click', performSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') performSearch();
+    });
+  }
 });
