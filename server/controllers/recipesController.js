@@ -39,3 +39,26 @@ export const getAllRecipes = async (req, res) => {
     res.status(500).json({ error: '서버 오류가 발생했습니다.' })
   }
 }
+
+// ✅ 레시피 상세 조회
+export const getRecipeById = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const { data, error } = await supabase
+      .from('recipes')
+      .select('id, name, description, category, time, image_url, ingredients, steps')
+      .eq('id', id)
+      .single()
+
+    if (error || !data) {
+      console.error('recipes: failed to fetch detail', error)
+      return res.status(404).json({ error: '레시피를 찾을 수 없습니다.' })
+    }
+
+    res.json(data)
+  } catch (err) {
+    console.error('recipes: unexpected error fetching detail', err)
+    res.status(500).json({ error: '서버 오류가 발생했습니다.' })
+  }
+}
