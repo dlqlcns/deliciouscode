@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js'
+import { supabase } from './server/supabaseClient.js'
 
 async function seed() {
     const { data, error } = await supabase
