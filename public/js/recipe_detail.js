@@ -1,92 +1,62 @@
 // ============================================
-// recipe_detail.js - 프론트엔드 (DB 연동)
+// recipe_detail.js - AI 기반 레시피 상세 페이지
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
-
-  async function fetchRecipeDetail(recipeId) {
+document.addEventListener("DOMContentLoaded", async () => {
+  async function fetchAIDetail(name) {
     try {
-      const res = await fetch(`/api/recipes/${recipeId}`); // 서버에 요청
-      if (!res.ok) throw new Error("레시피 정보를 가져오지 못했습니다.");
-      const recipe = await res.json();
-      return recipe;
+      const res = await fetch("/api/ai/detail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!res.ok) throw new Error("AI 상세 레시피 불러오기 실패");
+      return await res.json();
     } catch (err) {
-      console.error("레시피 조회 오류:", err);
+      console.error("AI 레시피 조회 오류:", err);
       return null;
     }
   }
 
   function renderRecipeDetail(recipe) {
-    const container = document.querySelector('.recipe-detail-container');
+    const container = document.querySelector(".recipe-detail-container");
     if (!recipe) {
-      container.innerHTML = '<p style="text-align: center; font-size: 1.5rem; color: #cc0000; margin: 4rem 0;">레시피 정보를 찾을 수 없습니다.</p>';
+      container.innerHTML =
+        '<p style="text-align:center;color:#cc0000;font-size:1.2rem;">레시피 정보를 불러올 수 없습니다.</p>';
       return;
     }
 
-    // 페이지 제목 및 기본 정보
     document.title = `${recipe.name} | 맛있는 코드`;
-    document.getElementById('recipeMainImage').src = recipe.image_url;
-    document.getElementById('recipeMainImage').alt = recipe.name;
-    document.getElementById('recipeTitle').textContent = recipe.name;
-    document.getElementById('recipeDesc').textContent = recipe.description || '';
-    document.getElementById('recipeTime').textContent = recipe.time || '';
-    document.getElementById('recipeCategory').textContent = recipe.category || '';
+    document.getElementById("recipeMainImage").src = recipe.image_url || "/img/default_recipe.png";
+    document.getElementById("recipeTitle").textContent = recipe.name;
+    document.getElementById("recipeDesc").textContent = recipe.description || "AI가 생성한 레시피입니다.";
+    document.getElementById("recipeTime").textContent = recipe.time || "약 30분";
+    document.getElementById("recipeCategory").textContent = "AI 추천";
 
-    // 1️⃣ 재료 목록
-    const ingredientsContainer = document.getElementById('ingredientsContainer');
-    ingredientsContainer.innerHTML = '';
-    if (recipe.ingredients?.length) {
-      recipe.ingredients.forEach(item => {
-        const ingredientItem = document.createElement('div');
-        ingredientItem.className = 'ingredient-item';
-        ingredientItem.innerHTML = `
-          <div class="ingredient-info">
-            <span class="ingredient-name">${item.name}</span>
-            <span class="ingredient-amount">${item.amount}</span>
-          </div>
-        `;
-        ingredientsContainer.appendChild(ingredientItem);
-      });
-    } else {
-      ingredientsContainer.innerHTML = '<p style="color: #888; font-size: 14px;">준비된 재료 정보가 없습니다.</p>';
-    }
+    const ingredientsContainer = document.getElementById("ingredientsContainer");
+    ingredientsContainer.innerHTML = recipe.ingredients?.length
+      ? recipe.ingredients.map(i => `<div class="ingredient-item">${i}</div>`).join("")
+      : "<p>재료 정보가 없습니다.</p>";
 
-    // 2️⃣ 조리 순서
-    const stepsList = document.getElementById('recipeStepsList');
-    stepsList.innerHTML = '';
-    if (recipe.steps?.length) {
-      recipe.steps.forEach(step => {
-        const stepItem = document.createElement('div');
-        stepItem.className = 'recipe-step-item';
-        stepItem.innerHTML = `
-          <div class="step-image-box" style="background-image: url('${step.image_url || recipe.image_url}');"></div>
-          <div class="step-content">
-            <div class="step-number">${step.num}</div>
-            <h3 class="step-title">${step.title}</h3>
-            <p class="step-description">${step.desc}</p>
-          </div>
-        `;
-        stepsList.appendChild(stepItem);
-      });
-    } else {
-      stepsList.innerHTML = '<p style="color: #888; text-align: center;">준비된 조리 순서가 없습니다.</p>';
-    }
+    const stepsList = document.getElementById("recipeStepsList");
+    stepsList.innerHTML = recipe.steps?.length
+      ? recipe.steps.map((s, idx) => `
+          <div class="recipe-step-item">
+            <div class="step-number">${idx + 1}</div>
+            <p class="step-description">${s}</p>
+          </div>`).join("")
+      : "<p>조리 순서가 없습니다.</p>";
   }
 
-  async function initialize() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const recipeId = urlParams.get('id');
-
-    if (!recipeId) {
-      document.querySelector('.recipe-detail-container').innerHTML =
-        '<p style="text-align: center; font-size: 1.5rem; color: #cc0000; margin: 4rem 0;">레시피 ID가 전달되지 않았습니다.</p>';
-      console.error("레시피 ID가 URL에 없습니다.");
-      return;
-    }
-
-    const recipe = await fetchRecipeDetail(recipeId);
-    renderRecipeDetail(recipe);
+  // URL에서 레시피 이름 추출
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("name");
+  if (!name) {
+    document.querySelector(".recipe-detail-container").innerHTML =
+      "<p>레시피 이름이 전달되지 않았습니다.</p>";
+    return;
   }
 
-  initialize();
+  const recipe = await fetchAIDetail(name);
+  renderRecipeDetail(recipe);
 });
