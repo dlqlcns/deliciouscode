@@ -25,4 +25,13 @@ router.get('/', async (req, res) => {
   res.json(data)
 })
 
+router.get('/', async (req, res) => {
+  const { data, error } = await supabase
+    .from('recipes')
+    .select('*');
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
 export default router
