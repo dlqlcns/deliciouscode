@@ -5,3 +5,5 @@ const router = express.Router()
 
 router.get('/recommended', getRecommendedRecipes)
 router.get('/', getAllRecipes)
+
+export default router
