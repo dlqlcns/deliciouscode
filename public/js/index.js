@@ -4,54 +4,42 @@
 // ⚠️ recipe_res_block.js를 먼저 로드해야 함!
 
 // 추천 레시피 데이터 (실제로는 서버에서 가져올 데이터)
-const recommendedRecipes = [
-  {
-    id: 'kimchi_jjigae',
-    name: "김치찌개",
-    image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop",
-    time: "30분",
-    description: "매콤하고 시원한 국물이 일품인 한국의 대표 찌개",
-    category: "한식",
-    bookmarked: false
-  },
-  {
-    id: 'cream_pasta',
-    name: "크림 파스타",
-    image: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop",
-    time: "20분",
-    description: "부드럽고 고소한 크림 소스가 면발과 완벽하게 어우러진 파스타",
-    category: "양식",
-    bookmarked: false
-  },
-  {
-    id: 'ramen',
-    name: "일본식 라멘",
-    image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop",
-    time: "45분",
-    description: "진한 돈코츠 육수에 탱탱한 면발이 일품인 일본식 라멘",
-    category: "일식",
-    bookmarked: false
-  },
-  {
-    id: 'chocolate_cake',
-    name: "초콜릿 케이크",
-    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop",
-    time: "60분",
-    description: "촉촉하고 진한 초콜릿 풍미가 가득한 케이크",
-    category: "디저트",
-    bookmarked: false
-  },
-  {
-    id: 'grilled_salad',
-    name: "그릴 샐러드",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
-    time: "15분",
-    description: "신선한 채소와 건강한 드레싱으로 만든 샐러드",
-    category: "샐러드",
-    bookmarked: false
-  },
+import { supabase } from './supabaseClient.js'
 
-];
+async function getRecommendedRecipes() {
+    // recipes 테이블에서 최신 5개 레시피 가져오기 예시
+    const { data, error } = await supabase
+        .from('recipes')
+        .select('id, name, category, time')
+        .order('id', { ascending: true })
+        .limit(5)
+
+    if (error) {
+        console.error('Error fetching recipes:', error)
+        return []
+    }
+    return data
+}
+
+// 페이지 렌더링할 때 사용
+async function renderRecommended() {
+    const recipes = await getRecommendedRecipes()
+    const container = document.getElementById('recommended-container')
+    container.innerHTML = ''
+
+    recipes.forEach(recipe => {
+        const card = document.createElement('div')
+        card.className = 'recipe-card'
+        card.innerHTML = `
+            <h3>${recipe.name}</h3>
+            <p>카테고리: ${recipe.category}</p>
+            <p>소요시간: ${recipe.time}</p>
+        `
+        container.appendChild(card)
+    })
+}
+
+renderRecommended()
 
 // 북마크 상태 관리
 let recipes = [...recommendedRecipes];
@@ -146,4 +134,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
 });
