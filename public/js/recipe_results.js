@@ -1,5 +1,5 @@
 // ============================================
-// recipe_results.js - AI 생성 레시피 결과 페이지
+// recipe_results.js - Supabase 레시피 결과 페이지
 // ============================================
 // ⚠️ recipe_res_block.js 먼저 로드되어 있어야 함
 // ============================================
@@ -19,9 +19,9 @@ const getUserAllergies = () => {
 };
 
 // ============================================
-// AI 서버에서 레시피 목록 불러오기
+// Supabase에서 레시피 목록 불러오기
 // ============================================
-async function fetchAIRecipes() {
+async function fetchDbRecipes() {
   const urlParams = new URLSearchParams(window.location.search);
   const ingredientsParam = urlParams.get("ingredients") || "";
   const ingredients = ingredientsParam.split(",").map(i => i.trim()).filter(Boolean);
@@ -32,46 +32,19 @@ async function fetchAIRecipes() {
   }
 
   try {
-    const res = await fetch("/api/ai/list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients, allergies: getUserAllergies() }),
+    const query = new URLSearchParams({
+      ingredients: ingredients.join(","),
+      allergies: getUserAllergies().join(","),
     });
 
-    if (!res.ok) throw new Error("AI 레시피 목록을 불러오지 못했습니다.");
-    const recipes = await res.json();
+    const res = await fetch(`/api/recipes/search?${query.toString()}`);
 
-    return recipes.map((r, idx) => ({
-      id: idx + 1,
-      name: r.name,
-      description: r.description,
-      category: "AI 추천",
-      bookmarked: false,
-    }));
-  } catch (err) {
-    console.error("AI 목록 요청 오류:", err);
-    showToastNotification("AI 추천 레시피를 불러올 수 없습니다.");
-    return [];
-  }
-}
-
-// ============================================
-// AI 상세 레시피 불러오기
-// ============================================
-async function fetchAIDetail(name) {
-  try {
-    const res = await fetch("/api/ai/detail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, allergies: getUserAllergies() }),
-    });
-
-    if (!res.ok) throw new Error("AI 레시피 상세정보 불러오기 실패");
+    if (!res.ok) throw new Error("레시피 목록을 불러오지 못했습니다.");
     return await res.json();
   } catch (err) {
-    console.error("AI 상세 요청 오류:", err);
-    showToastNotification("상세 정보를 불러올 수 없습니다.");
-    return null;
+    console.error("DB 목록 요청 오류:", err);
+    showToastNotification("레시피를 불러올 수 없습니다.");
+    return [];
   }
 }
 
@@ -94,7 +67,7 @@ function renderRecipes(recipes) {
       <div class="recipe-content">
         <h3>${recipe.name}</h3>
         <p>${recipe.description}</p>
-        <button class="detail-btn" data-name="${recipe.name}">자세히 보기</button>
+        <button class="detail-btn" data-id="${recipe.id}">자세히 보기</button>
       </div>
     `;
     recipeList.appendChild(card);
@@ -103,28 +76,9 @@ function renderRecipes(recipes) {
   // 상세보기 버튼 이벤트
   document.querySelectorAll(".detail-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
-      const name = btn.dataset.name;
-      const detail = await fetchAIDetail(name);
-
-      if (detail) {
-        const detailHtml = `
-          <div class="ai-detail-popup">
-            <div class="popup-inner">
-              <h2>${detail.name}</h2>
-              <h4>🧂 재료</h4>
-              <ul>${detail.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
-              <h4>👨‍🍳 조리 순서</h4>
-              <ol>${detail.steps.map(s => `<li>${s}</li>`).join("")}</ol>
-              <button class="close-detail">닫기</button>
-            </div>
-          </div>
-        `;
-
-        document.body.insertAdjacentHTML("beforeend", detailHtml);
-
-        document.querySelector(".close-detail").addEventListener("click", () => {
-          document.querySelector(".ai-detail-popup").remove();
-        });
+      const recipeId = btn.dataset.id;
+      if (recipeId) {
+        window.location.href = `recipe_detail.html?id=${recipeId}`;
       }
     });
   });
@@ -134,7 +88,7 @@ function renderRecipes(recipes) {
 // 페이지 초기화
 // ============================================
 document.addEventListener("DOMContentLoaded", async () => {
-  currentRecipes = await fetchAIRecipes();
+  currentRecipes = await fetchDbRecipes();
   renderRecipes(currentRecipes);
 
   // 헤더 검색창 - 재검색 기능

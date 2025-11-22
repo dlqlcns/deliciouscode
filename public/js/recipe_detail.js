@@ -1,5 +1,5 @@
 // ============================================
-// recipe_detail.js - AI 기반 레시피 상세 페이지
+// recipe_detail.js - Supabase 기반 레시피 상세 페이지
 // ============================================
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -13,17 +13,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  async function fetchAIDetail(name) {
+  async function fetchRecipeDetail(id) {
     try {
-      const res = await fetch("/api/ai/detail", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, allergies: getUserAllergies() }),
-      });
-      if (!res.ok) throw new Error("AI 상세 레시피 불러오기 실패");
+      const query = new URLSearchParams({ allergies: getUserAllergies().join(",") });
+      const res = await fetch(`/api/recipes/${id}?${query.toString()}`);
+      if (!res.ok) throw new Error("레시피 불러오기 실패");
       return await res.json();
     } catch (err) {
-      console.error("AI 레시피 조회 오류:", err);
+      console.error("레시피 조회 오류:", err);
       return null;
     }
   }
@@ -39,9 +36,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.title = `${recipe.name} | 맛있는 코드`;
     document.getElementById("recipeMainImage").src = recipe.image_url || "/img/default_recipe.png";
     document.getElementById("recipeTitle").textContent = recipe.name;
-    document.getElementById("recipeDesc").textContent = recipe.description || "AI가 생성한 레시피입니다.";
+    document.getElementById("recipeDesc").textContent = recipe.description || "레시피 설명이 없습니다.";
     document.getElementById("recipeTime").textContent = recipe.time || "약 30분";
-    document.getElementById("recipeCategory").textContent = "AI 추천";
+    document.getElementById("recipeCategory").textContent = recipe.category || "일반";
 
     const ingredientsContainer = document.getElementById("ingredientsContainer");
     ingredientsContainer.innerHTML = recipe.ingredients?.length
@@ -58,15 +55,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       : "<p>조리 순서가 없습니다.</p>";
   }
 
-  // URL에서 레시피 이름 추출
+  // URL에서 레시피 id 추출
   const params = new URLSearchParams(window.location.search);
-  const name = params.get("name");
-  if (!name) {
+  const id = params.get("id");
+  if (!id) {
     document.querySelector(".recipe-detail-container").innerHTML =
-      "<p>레시피 이름이 전달되지 않았습니다.</p>";
+      "<p>레시피 정보가 전달되지 않았습니다.</p>";
     return;
   }
 
-  const recipe = await fetchAIDetail(name);
+  const recipe = await fetchRecipeDetail(id);
   renderRecipeDetail(recipe);
 });

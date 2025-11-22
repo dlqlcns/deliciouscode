@@ -1,5 +1,5 @@
 // ============================================
-// recipe_all.js - AI 추천 전체 레시피 페이지
+// recipe_all.js - Supabase 전체 레시피 페이지
 // ============================================
 
 let currentRecipes = [];
@@ -18,30 +18,26 @@ const getUserAllergies = () => {
 };
 
 // ============================================
-// AI 서버에서 레시피 가져오기
+// Supabase에서 레시피 가져오기
 // ============================================
-async function fetchAIRecipes() {
+async function fetchDbRecipes() {
   try {
-    const res = await fetch("/api/ai/list", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients: ["전체 추천"], allergies: getUserAllergies() }),
+    const query = new URLSearchParams({
+      allergies: getUserAllergies().join(","),
     });
 
-    if (!res.ok) throw new Error("AI 레시피를 불러오지 못했습니다.");
+    const res = await fetch(`/api/recipes?${query.toString()}`);
+
+    if (!res.ok) throw new Error("레시피를 불러오지 못했습니다.");
     const recipes = await res.json();
 
-    return recipes.map((r, idx) => ({
-      id: idx + 1,
-      name: r.name,
-      description: r.description,
-      category: "AI 추천",
-      time: r.time || "30분",
+    return recipes.map(r => ({
+      ...r,
       bookmarked: false,
     }));
   } catch (err) {
-    console.error("AI 전체 레시피 로드 오류:", err);
-    showToastNotification("AI 레시피를 불러올 수 없습니다.");
+    console.error("전체 레시피 로드 오류:", err);
+    showToastNotification("레시피를 불러올 수 없습니다.");
     return [];
   }
 }
@@ -116,7 +112,7 @@ function filterRecipes() {
 // 초기화
 // ============================================
 document.addEventListener("DOMContentLoaded", async () => {
-  currentRecipes = await fetchAIRecipes();
+  currentRecipes = await fetchDbRecipes();
   renderRecipes();
 });
 
