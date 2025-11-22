@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p class="recipe-category">${recipe.category}</p>
           <p class="recipe-desc-short">${recipe.description}</p>
           <div class="recipe-time">
-            <img src="아이콘/timer.png" alt="시간" class="time-icon" />
+            <img src="/img/icons/timer.png" alt="시간" class="time-icon" />
             <span>${recipe.time}</span>
           </div>
         </div>
@@ -268,5 +268,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // ============================================
   displayUserInfo();
   renderRecipes();
+
 
 });
