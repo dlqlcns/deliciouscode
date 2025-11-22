@@ -47,4 +47,18 @@ router.put('/me', auth, async (req, res) => {
   res.json({ message: '저장되었습니다.', user: data[0] })
 })
 
+router.get('/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, email, allergies, preferences, ingredients')
+    .eq('id', userId)
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+
+});
+
 export default router
