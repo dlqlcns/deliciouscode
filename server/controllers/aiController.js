@@ -39,6 +39,4 @@ export const generateRecipeList = async (req, res) => {
 
   const allergyList = Array.isArray(allergies) ? allergies : [];
 
-  const prompt = `
-사용자가 입력한 재료: ${ingredients.join(", ")}
-}
+  const prompt = `다음 재료를 기반으로 간단한 요리 하나를 추천해주시고, 필요한 추가 재료와 요리 방법을 설명해주세요: ${ingredients.join(", ")}`;
