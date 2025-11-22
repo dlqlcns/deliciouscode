@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import jwt from '../utils/jwt.js'
 import { supabase } from '../supabaseClient.js'
 
 export const signup = async (req, res) => {
