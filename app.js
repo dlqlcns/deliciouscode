@@ -1,7 +1,7 @@
 // server.js
 import express from 'express'
 import bodyParser from 'body-parser'
-import { supabase } from './supabaseClient.js'
+import { supabase } from '/server/supabaseClient.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
