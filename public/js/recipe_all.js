@@ -1,135 +1,113 @@
-// ============================================
-// recipe_all.js - 전체 레시피 페이지 (DB 연동 버전)
-// ============================================
+let currentRecipes = []
+const recipeList = document.getElementById('recipeList')
+const categorySelect = document.getElementById('categorySelect')
+const sortSelect = document.getElementById('sortSelect')
 
-let currentRecipes = [];
-const recipeList = document.getElementById('recipeList');
-const categorySelect = document.getElementById('categorySelect');
-const sortSelect = document.getElementById('sortSelect');
+const token = localStorage.getItem('token') || ''
 
-// ============================================
-// 서버에서 레시피 데이터 가져오기
-// ============================================
-async function fetchRecipes() {
-    try {
-        const response = await fetch('/api/recipes'); // 서버 API
-        if (!response.ok) throw new Error('레시피 데이터를 가져오지 못했습니다.');
-        const data = await response.json();
-        return data; // [{id, name, image, time, description, category}, ...]
-    } catch (err) {
-        console.error(err);
-        return [];
-    }
+async function fetchRecipesFromServer() {
+  try {
+    const res = await fetch('/api/recipes', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    if (!res.ok) throw new Error('레시피를 불러올 수 없습니다.')
+    return await res.json()
+  } catch (err) {
+    console.error(err)
+    return []
+  }
 }
 
-// ============================================
-// 로컬 즐겨찾기 상태 적용
-// ============================================
-function applyFavorites(recipes) {
-    const favs = JSON.parse(localStorage.getItem("favorites")) || [];
-    recipes.forEach(r => r.bookmarked = favs.includes(r.id));
+async function fetchFavoritesFromServer() {
+  try {
+    const res = await fetch('/api/favorites', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+    if (!res.ok) return []
+    return await res.json()
+  } catch {
+    return []
+  }
 }
 
-// ============================================
-// 렌더링 함수
-// ============================================
 function renderRecipes() {
-    if (!recipeList) return;
-    recipeList.innerHTML = '';
+  if (!recipeList) return
+  recipeList.innerHTML = ''
 
-    if (!currentRecipes || currentRecipes.length === 0) {
-        recipeList.innerHTML = '<p style="text-align:center;color:#888;font-size:1.1rem;grid-column:1/-1">검색 결과가 없습니다.</p>';
-        return;
-    }
+  if (!currentRecipes.length) {
+    recipeList.innerHTML = '<p class="empty">검색 결과가 없습니다.</p>'
+    return
+  }
 
-    currentRecipes.forEach(r => {
-        const card = createRecipeBlock(r);
-        recipeList.appendChild(card);
-    });
+  currentRecipes.forEach(r => {
+    const card = createRecipeBlock(r)
+    recipeList.appendChild(card)
+  })
 
-    attachBookmarkListeners(onBookmarkClicked);
+  attachBookmarkListeners(onBookmarkClicked)
 }
 
-// ============================================
-// 북마크 클릭 처리
-// ============================================
-function onBookmarkClicked(id) {
-    const idx = currentRecipes.findIndex(x => x.id === id);
-    if (idx < 0) return;
+async function onBookmarkClicked(recipeId) {
+  const recipe = currentRecipes.find(r => r.id === recipeId)
+  if (!recipe) return
 
-    currentRecipes[idx].bookmarked = !currentRecipes[idx].bookmarked;
-    const isBookmarked = currentRecipes[idx].bookmarked;
-    const recipeName = currentRecipes[idx].name;
+  recipe.bookmarked = !recipe.bookmarked
 
-    let favs = JSON.parse(localStorage.getItem("favorites")) || [];
-    if (isBookmarked) {
-        if (!favs.includes(id)) favs.push(id);
-    } else {
-        favs = favs.filter(favId => favId !== id);
-    }
-    localStorage.setItem("favorites", JSON.stringify(favs));
+  try {
+    await fetch('/api/favorites', {
+      method: recipe.bookmarked ? 'POST' : 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ recipe_id: recipeId })
+    })
 
-    // UI 버튼 상태만 업데이트
-    const btn = document.querySelector(`.bookmark-btn[data-bookmark-id="${id}"]`);
-    if (btn) {
-        btn.textContent = isBookmarked ? '♥' : '♡';
-        btn.classList.toggle('active', isBookmarked);
-    }
-
-    // 🔔 통합 알림
-    if (isBookmarked) {
-        showToastNotification(
-            `"${recipeName}"이(가) 즐겨찾기에 추가되었습니다.`,
-            "이동",
-            () => { window.location.href = "my_fav.html"; }
-        );
-    } else {
-        showToastNotification(`"${recipeName}"이(가) 즐겨찾기에서 해제되었습니다.`);
-    }
-
-    // 인기순 정렬이면 재정렬
-    if (sortSelect && sortSelect.value === '인기순') filterRecipes();
+    renderRecipes()
+    showToastNotification(`"${recipe.name}"이(가) ${recipe.bookmarked ? '즐겨찾기에 추가' : '즐겨찾기에서 제거'}되었습니다.`)
+  } catch (err) {
+    console.error('즐겨찾기 토글 오류:', err)
+  }
 }
 
-// ============================================
-// 필터 및 정렬
-// ============================================
 function filterRecipes() {
-    const selectedCategory = categorySelect?.value || '전체';
-    const sortOption = sortSelect?.value || '최신순';
+  const selectedCategory = categorySelect?.value || '전체'
+  const sortOption = sortSelect?.value || '최신순'
 
-    let filtered = [...currentRecipes];
-    if (selectedCategory !== '전체') {
-        filtered = filtered.filter(r => r.category === selectedCategory);
-    }
+  let filtered = [...currentRecipes]
+  if (selectedCategory !== '전체') {
+    filtered = filtered.filter(r => r.category === selectedCategory)
+  }
 
-    switch (sortOption) {
-        case '인기순':
-            filtered.sort((a, b) => (b.bookmarked ? 1 : 0) - (a.bookmarked ? 1 : 0));
-            break;
-        case '조리 시간순':
-            filtered.sort((a, b) => parseInt(a.time) - parseInt(b.time));
-            break;
-        case '이름순':
-            filtered.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-        default:
-            filtered.sort((a, b) => (a.id < b.id ? 1 : -1));
-            break;
-    }
+  switch (sortOption) {
+    case '이름순':
+      filtered.sort((a, b) => a.name.localeCompare(b.name))
+      break
+    case '조리 시간순':
+      filtered.sort((a, b) => parseInt(a.time) - parseInt(b.time))
+      break
+    default:
+      filtered.sort((a, b) => (a.id < b.id ? 1 : -1))
+      break
+  }
 
-    currentRecipes = filtered;
-    renderRecipes();
+  currentRecipes = filtered
+  renderRecipes()
 }
 
-if (categorySelect) categorySelect.addEventListener('change', filterRecipes);
-if (sortSelect) sortSelect.addEventListener('change', filterRecipes);
-
-// ============================================
-// 초기화
-// ============================================
 document.addEventListener('DOMContentLoaded', async () => {
-    currentRecipes = await fetchRecipes();
-    applyFavorites(currentRecipes);
-    renderRecipes();
-});
+  const [recipes, favorites] = await Promise.all([
+    fetchRecipesFromServer(),
+    fetchFavoritesFromServer()
+  ])
+
+  recipes.forEach(r => {
+    r.bookmarked = favorites.includes(r.id)
+  })
+
+  currentRecipes = recipes
+  renderRecipes()
+})
+
+categorySelect?.addEventListener('change', filterRecipes)
+sortSelect?.addEventListener('change', filterRecipes)
