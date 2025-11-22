@@ -41,3 +41,4 @@ export const generateRecipeList = async (req, res) => {
 
   const prompt = `
 사용자가 입력한 재료: ${ingredients.join(", ")}
+}
