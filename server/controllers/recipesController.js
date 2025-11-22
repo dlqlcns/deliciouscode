@@ -9,11 +9,7 @@ export const getRecommendedRecipes = async (req, res) => {
       .order('id', { ascending: true })
       .limit(5)
 
-    if (error) {
-      console.error('recipes: failed to fetch recommended', error)
-      return res.status(500).json({ error: error.message })
-    }
-
+    if (error) return res.status(500).json({ error: error.message })
     res.json(data)
   } catch (err) {
     console.error('recipes: unexpected error fetching recommended', err)
@@ -26,13 +22,9 @@ export const getAllRecipes = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('recipes')
-      .select('id, name, category, description, time, image_url')
+      .select('id, name, description, category, time, image_url')
 
-    if (error) {
-      console.error('recipes: failed to fetch all', error)
-      return res.status(500).json({ error: error.message })
-    }
-
+    if (error) return res.status(500).json({ error: error.message })
     res.json(data)
   } catch (err) {
     console.error('recipes: unexpected error fetching all', err)
@@ -40,22 +32,17 @@ export const getAllRecipes = async (req, res) => {
   }
 }
 
-/** 📌 특정 레시피 상세 조회 */
+/** 📌 레시피 상세 조회 */
 export const getRecipeById = async (req, res) => {
   try {
     const { id } = req.params
-
     const { data, error } = await supabase
       .from('recipes')
       .select('id, name, description, category, time, image_url, ingredients, steps')
       .eq('id', id)
       .single()
 
-    if (error || !data) {
-      console.error('recipes: failed to fetch detail', error)
-      return res.status(404).json({ error: '레시피를 찾을 수 없습니다.' })
-    }
-
+    if (error || !data) return res.status(404).json({ error: '레시피를 찾을 수 없습니다.' })
     res.json(data)
   } catch (err) {
     console.error('recipes: unexpected error fetching detail', err)
@@ -72,16 +59,13 @@ export const searchRecipes = async (req, res) => {
       .from('recipes')
       .select('id, name, description, category, time, image_url')
 
-    // 검색어 필터
     if (query) request = request.ilike('name', `%${query}%`)
 
-    // 포함 재료 검색
     if (ingredients) {
       const list = ingredients.split(',').map(i => i.trim())
       request = request.or(list.map(i => `description.ilike.%${i}%`).join(','))
     }
 
-    // 제외 재료
     if (exclude) {
       const excluded = exclude.split(',').map(e => e.trim())
       excluded.forEach(term => {
@@ -89,12 +73,8 @@ export const searchRecipes = async (req, res) => {
       })
     }
 
-    // 카테고리 필터
-    if (category && category !== '전체') {
-      request = request.eq('category', category)
-    }
+    if (category && category !== '전체') request = request.eq('category', category)
 
-    // 정렬
     switch (sort) {
       case '이름순':
         request = request.order('name', { ascending: true })
@@ -102,19 +82,13 @@ export const searchRecipes = async (req, res) => {
       case '조리 시간순':
         request = request.order('time', { ascending: true })
         break
-      case '최신순':
       default:
         request = request.order('id', { ascending: false })
         break
     }
 
     const { data, error } = await request
-
-    if (error) {
-      console.error('recipes: search failed', error)
-      return res.status(500).json({ error: error.message })
-    }
-
+    if (error) return res.status(500).json({ error: error.message })
     res.json(data)
   } catch (err) {
     console.error('recipes: search unexpected error', err)
