@@ -1,7 +1,7 @@
 import express from 'express'
 import {
-  getAllRecipes,
   getRecommendedRecipes,
+  getAllRecipes,
   getRecipeById,
   searchRecipes
 } from '../controllers/recipesController.js'
@@ -9,8 +9,8 @@ import {
 const router = express.Router()
 
 router.get('/recommended', getRecommendedRecipes)
-router.get('/search', searchRecipes)
 router.get('/', getAllRecipes)
+router.get('/search', searchRecipes)
 router.get('/:id', getRecipeById)
 
 export default router
