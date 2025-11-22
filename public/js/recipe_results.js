@@ -8,6 +8,16 @@ let currentRecipes = [];
 const recipeList = document.getElementById("recipeList");
 const headerSearchInput = document.getElementById("headerSearchInput");
 
+const getUserAllergies = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return Array.isArray(user?.allergies) ? user.allergies : [];
+  } catch (e) {
+    console.warn("알레르기 정보를 불러오지 못했습니다:", e);
+    return [];
+  }
+};
+
 // ============================================
 // AI 서버에서 레시피 목록 불러오기
 // ============================================
@@ -25,8 +35,8 @@ async function fetchAIRecipes() {
     const res = await fetch("/api/ai/list", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ingredients }),
-    });
+      body: JSON.stringify({ ingredients, allergies: getUserAllergies() }),
+    });␊
 
     if (!res.ok) throw new Error("AI 레시피 목록을 불러오지 못했습니다.");
     const recipes = await res.json();
@@ -53,8 +63,8 @@ async function fetchAIDetail(name) {
     const res = await fetch("/api/ai/detail", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
-    });
+      body: JSON.stringify({ name, allergies: getUserAllergies() }),
+    });␊
 
     if (!res.ok) throw new Error("AI 레시피 상세정보 불러오기 실패");
     return await res.json();
@@ -80,60 +90,3 @@ function renderRecipes(recipes) {
   recipes.forEach(recipe => {
     const card = document.createElement("div");
     card.className = "ai-recipe-card";
-    card.innerHTML = `
-      <div class="recipe-content">
-        <h3>${recipe.name}</h3>
-        <p>${recipe.description}</p>
-        <button class="detail-btn" data-name="${recipe.name}">자세히 보기</button>
-      </div>
-    `;
-    recipeList.appendChild(card);
-  });
-
-  // 상세보기 버튼 이벤트
-  document.querySelectorAll(".detail-btn").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const name = btn.dataset.name;
-      const detail = await fetchAIDetail(name);
-
-      if (detail) {
-        const detailHtml = `
-          <div class="ai-detail-popup">
-            <div class="popup-inner">
-              <h2>${detail.name}</h2>
-              <h4>🧂 재료</h4>
-              <ul>${detail.ingredients.map(i => `<li>${i}</li>`).join("")}</ul>
-              <h4>👨‍🍳 조리 순서</h4>
-              <ol>${detail.steps.map(s => `<li>${s}</li>`).join("")}</ol>
-              <button class="close-detail">닫기</button>
-            </div>
-          </div>
-        `;
-
-        document.body.insertAdjacentHTML("beforeend", detailHtml);
-
-        document.querySelector(".close-detail").addEventListener("click", () => {
-          document.querySelector(".ai-detail-popup").remove();
-        });
-      }
-    });
-  });
-}
-
-// ============================================
-// 페이지 초기화
-// ============================================
-document.addEventListener("DOMContentLoaded", async () => {
-  currentRecipes = await fetchAIRecipes();
-  renderRecipes(currentRecipes);
-
-  // 헤더 검색창 - 재검색 기능
-  if (headerSearchInput) {
-    headerSearchInput.addEventListener("keypress", e => {
-      if (e.key !== "Enter") return;
-      const query = headerSearchInput.value.trim();
-      if (!query) return;
-      window.location.href = `recipe_results.html?ingredients=${encodeURIComponent(query)}`;
-    });
-  }
-});
