@@ -3,6 +3,7 @@ import cors from 'cors'
 import authRoutes from './routes/auth.js'
 import recipeRoutes from './routes/recipes.js'
 import favoriteRoutes from './routes/favorites.js'
+import userRoutes from './routes/users.js'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -15,6 +16,7 @@ app.use(express.static('public'))
 app.use('/api/auth', authRoutes)
 app.use('/api/recipes', recipeRoutes)
 app.use('/api/favorites', favoriteRoutes)
+app.use('/api/users', userRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
