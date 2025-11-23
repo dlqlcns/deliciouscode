@@ -1,7 +1,6 @@
 import { API_BASE } from "./config.js";
 import { createRecipeBlock, attachBookmarkListeners } from "./recipe_res_block.js";
 
-/* 공용 fetch 함수 */
 async function fetchJSON(url) {
   try {
     const res = await fetch(url);
@@ -16,63 +15,43 @@ async function fetchJSON(url) {
 /* 추천 레시피 (5개) */
 async function renderRecommended() {
   const container = document.getElementById("recommended-container");
-  if (!container) return;
-
+  if (!container) return;            // 🔥 index 페이지에서만 실행
   container.innerHTML = "";
 
   const recipes = await fetchJSON(`${API_BASE}/recipes/recommended`);
-  if (!recipes.length) {
-    container.innerHTML = `<p class="empty-msg">추천 레시피를 불러올 수 없습니다.</p>`;
-    return;
-  }
-
-  recipes.forEach(recipe => {
-    const card = createRecipeBlock(recipe);
-    container.appendChild(card);
+  recipes.slice(0,5).forEach(recipe => {
+    container.appendChild(createRecipeBlock(recipe));
   });
 
   attachBookmarkListeners();
 }
 
-/* 전체 레시피 */
+/* 전체 레시피는 index 페이지가 아닐 경우 실행하지 않음 */
 async function renderRecipeCards() {
   const recipeGrid = document.getElementById("recipeGrid");
-  if (!recipeGrid) return;
-
+  if (!recipeGrid) return;           // 🔥 전체 레시피 페이지에서만 실행
   recipeGrid.innerHTML = "";
 
   const recipes = await fetchJSON(`${API_BASE}/recipes`);
-  if (!recipes.length) {
-    recipeGrid.innerHTML = `<p class="empty-msg">레시피가 없습니다.</p>`;
-    return;
-  }
-
   recipes.forEach(recipe => {
     const card = createRecipeBlock(recipe);
-
-    // 카드 클릭 → 상세 페이지 이동
-    card.addEventListener("click", (e) => {
-      if (!e.target.classList.contains("bookmark-btn")) {
-        window.location.href = `recipe_detail.html?id=${recipe.id}`;
-      }
-    });
-
     recipeGrid.appendChild(card);
   });
 
   attachBookmarkListeners();
 }
 
-/* 검색 이벤트 (Enter 입력 시 이동) */
+/* 검색 */
 function setupSearchHandlers() {
-  const headerSearchInput = document.getElementById("headerSearchInput");
-  if (!headerSearchInput) return;
+  const input = document.getElementById("headerSearchInput");
+  if (!input) return;
 
-  headerSearchInput.addEventListener("keypress", e => {
+  input.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
-      const query = headerSearchInput.value.trim();
-      if (query) {
-        window.location.href = `recipe_results.html?ingredients=${encodeURIComponent(query)}`;
+      const keyword = input.value.trim();
+      if (keyword) {
+        window.location.href =
+          `recipe_results.html?ingredients=${encodeURIComponent(keyword)}`;
       }
     }
   });
@@ -80,8 +59,7 @@ function setupSearchHandlers() {
 
 /* 초기 실행 */
 document.addEventListener("DOMContentLoaded", () => {
-  renderRecommended();
-  renderRecipeCards();
+  renderRecommended();   // index 페이지서만 동작
+  renderRecipeCards();   // 전체 레시피 페이지에서만 동작
   setupSearchHandlers();
 });
-
