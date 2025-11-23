@@ -1,6 +1,4 @@
-// ============================================
-// recipe_search.js - 검색 페이지 (DB 연동)
-// ============================================
+import { API_BASE } from "./config.js";
 
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('searchInput');
@@ -12,7 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('검색어를 입력하세요!');
       return;
     }
+
+    // 검색어 공백 → 쉼표(,) 변환
     const ingredients = query.replace(/\s+/g, ',');
+
+    // 🔥 서버 주소 포함하도록 변경
     window.location.href = `recipe_results.html?ingredients=${encodeURIComponent(ingredients)}`;
   }
 
