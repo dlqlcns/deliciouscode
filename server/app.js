@@ -5,7 +5,7 @@ import authRoutes from './routes/auth.js'
 import recipeRoutes from './routes/recipes.js'
 import favoriteRoutes from './routes/favorites.js'
 import userRoutes from './routes/users.js'
-import foodRoute from "./routes/foodRoute.js";
+import foodRoute from "./routes/food.js";
 
 const app = express()
 const PORT = process.env.PORT || 3000
