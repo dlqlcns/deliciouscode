@@ -1,31 +1,30 @@
-document.getElementById('joinForm').addEventListener('submit', async (e) => {
-  e.preventDefault()
+import { API_BASE } from "./config.js";
 
-  const username = document.getElementById('name').value.trim()
-  const email = document.getElementById('email').value.trim()
-  const password = document.getElementById('password').value.trim()
-  const passwordConfirm = document.getElementById('passwordConfirm').value.trim()
+document.getElementById("signupBtn").addEventListener("click", async () => {
+  const username = document.getElementById("username").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const allergies = document.getElementById("allergies").value;
+  const ingredients = document.getElementById("ingredients").value;
 
-  if (password !== passwordConfirm) {
-    return alert('비밀번호가 일치하지 않습니다.')
+  try {
+    const res = await fetch(`${API_BASE}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, email, password, allergies, ingredients })
+    });
+
+    const result = await res.json();
+    console.log(result);
+
+    if (res.ok) {
+      alert("회원가입 완료!");
+      window.location.href = "login.html";
+    } else {
+      alert(result.error || "회원가입 실패");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("서버 오류가 발생했습니다.");
   }
-
-  const allergies = [...document.querySelectorAll('#allergyContainer input:checked')]
-    .map(input => input.value)
-
-  const ingredients = [...document.querySelectorAll('.join-section:last-of-type input:checked')]
-    .map(input => input.value)
-
-  const res = await fetch('/api/auth/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, email, password, allergies, ingredients })
-  })
-
-  const data = await res.json()
-
-  if (!res.ok) return alert(data.error)
-  
-  alert('회원가입이 완료되었습니다!')
-  window.location.href = '/login.html'
-})
+});
