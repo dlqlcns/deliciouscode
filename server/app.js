@@ -5,7 +5,6 @@ import authRoutes from './routes/auth.js'
 import recipeRoutes from './routes/recipes.js'
 import favoriteRoutes from './routes/favorites.js'
 import userRoutes from './routes/users.js'
-import foodRoute from "./routes/food.js";
 import userIngredientsRoutes from "./routes/userIngredients.js";
 
 const app = express()
@@ -22,7 +21,6 @@ app.use(`${API_PREFIX}/auth`, authRoutes)
 app.use(`${API_PREFIX}/recipes`, recipeRoutes)
 app.use(`${API_PREFIX}/favorites`, favoriteRoutes)
 app.use(`${API_PREFIX}/users`, userRoutes)
-app.use(`${API_PREFIX}/food`, foodRoute);
 app.use(`${API_PREFIX}/user-ingredients`, userIngredientsRoutes);
 
 app.get('/', (req, res) => {
