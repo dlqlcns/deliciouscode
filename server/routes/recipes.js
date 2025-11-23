@@ -8,7 +8,7 @@ import {
 
 const router = express.Router()
 
-router.get('/recommended', getRecommendedRecipes)
+router.get('/recipes/recommended', getRecommendedRecipes)
 router.get('/', getAllRecipes)
 router.get('/search', searchRecipes)
 router.get('/:id', getRecipeById)
