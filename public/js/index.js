@@ -14,28 +14,13 @@ async function fetchJSON(url) {
 
 /* 추천 레시피 (5개) */
 async function renderRecommended() {
-  const container = document.getElementById("recommended-container");
+  const container = document.getElementById("recipeGrid");
   if (!container) return;            // 🔥 index 페이지에서만 실행
   container.innerHTML = "";
 
   const recipes = await fetchJSON(`${API_BASE}/recipes/recommended`);
-  recipes.slice(0,5).forEach(recipe => {
+  recipes.slice(0, 5).forEach(recipe => {
     container.appendChild(createRecipeBlock(recipe));
-  });
-
-  attachBookmarkListeners();
-}
-
-/* 전체 레시피는 index 페이지가 아닐 경우 실행하지 않음 */
-async function renderRecipeCards() {
-  const recipeGrid = document.getElementById("recipeGrid");
-  if (!recipeGrid) return;           // 🔥 전체 레시피 페이지에서만 실행
-  recipeGrid.innerHTML = "";
-
-  const recipes = await fetchJSON(`${API_BASE}/recipes`);
-  recipes.forEach(recipe => {
-    const card = createRecipeBlock(recipe);
-    recipeGrid.appendChild(card);
   });
 
   attachBookmarkListeners();
@@ -60,6 +45,5 @@ function setupSearchHandlers() {
 /* 초기 실행 */
 document.addEventListener("DOMContentLoaded", () => {
   renderRecommended();   // index 페이지서만 동작
-  renderRecipeCards();   // 전체 레시피 페이지에서만 동작
   setupSearchHandlers();
 });
