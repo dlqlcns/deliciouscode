@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/login.css" />
   <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700,800|Roboto:400|Didact+Gothic" rel="stylesheet" />
 </head>
+
 <body>
   <header class="login-header">
     <nav class="login-nav">
@@ -15,9 +16,9 @@
           <img src="/img/icons/logo.png" alt="맛있는 코드 로고" class="login-logo" />
         </a>
       </div>
-      
+
       <div class="nav-right">
-         <button class="nav-btn" onclick="location.href='/recipe_all.html'">레시피</button>
+        <button class="nav-btn" onclick="location.href='/recipe_all.html'">레시피</button>
         <div class="vertical-divider"></div>
         <button class="nav-btn" onclick="location.href='/recipe_search.html'">추천받기</button>
       </div>
@@ -28,21 +29,21 @@
     <div class="login-card">
       <h1 class="login-title">로그인</h1>
 
-      <form class="login-form" id="loginForm"> 
-        
+      <form class="login-form" id="loginForm">
         <div class="form-group">
-            <input type="text" id="userId" placeholder="아이디 또는 이메일 주소" class="input-field" />
+          <input type="text" id="userId" placeholder="아이디 또는 이메일 주소" class="input-field" />
         </div>
-        
+
         <div class="form-group">
-            <input type="password" id="password" placeholder="비밀번호" class="input-field" />
+          <input type="password" id="password" placeholder="비밀번호" class="input-field" />
         </div>
+
         <button type="submit" class="submit-btn">로그인</button>
 
         <div class="login-links">
-          <a href="/join.html"><button type="button">회원가입</button></a>
+          <button type="button" onclick="location.href='/join.html'">회원가입</button>
           <span>|</span>
-          <a href="/find.html"><button type="button">아이디/비밀번호 찾기</button></a>
+          <button type="button" onclick="location.href='/find.html'">아이디/비밀번호 찾기</button>
         </div>
 
         <div class="sns-divider">
@@ -71,7 +72,7 @@
     </div>
   </main>
 
-  <script src="/js/login.js"></script>
-
+  <!-- ⚠️ API 연동을 위해 module로 수정 -->
+  <script type="module" src="/js/login.js"></script>
 </body>
 </html>
