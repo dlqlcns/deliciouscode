@@ -1,4 +1,5 @@
 import { API_BASE } from "./config.js";
+import { createRecipeBlock } from "./recipe_res_block.js";
 
 let currentRecipes = [];
 const recipeList = document.getElementById('recipeList');
@@ -288,3 +289,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   currentRecipes = await fetchRecipesWithFavorites();
   renderRecipes();
 });
+
