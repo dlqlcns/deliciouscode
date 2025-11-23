@@ -35,20 +35,50 @@ export const getAllRecipes = async (req, res) => {
 /** 📌 레시피 상세 조회 */
 export const getRecipeById = async (req, res) => {
   try {
-    const { id } = req.params
-    const { data, error } = await supabase
-      .from('recipes')
-      .select('id, name, description, category, time, image_url, ingredients, steps')
-      .eq('id', id)
-      .single()
+    const { id } = req.params;
 
-    if (error || !data) return res.status(404).json({ error: '레시피를 찾을 수 없습니다.' })
-    res.json(data)
+    // 1️⃣ 기본 레시피 정보
+    const { data: recipe, error: recipeError } = await supabase
+      .from("recipes")
+      .select("id, name, description, category, time, image_url")
+      .eq("id", id)
+      .single();
+
+    if (recipeError || !recipe)
+      return res.status(404).json({ error: "레시피를 찾을 수 없습니다." });
+
+    // 2️⃣ 재료 목록
+    const { data: ingredients, error: ingredientsError } = await supabase
+      .from("recipe_ingredients")
+      .select("ingredient, amount, unit")
+      .eq("recipe_id", id);
+
+    if (ingredientsError)
+      return res.status(500).json({ error: "재료 정보를 불러오지 못했습니다." });
+
+    // 3️⃣ 조리 단계
+    const { data: steps, error: stepsError } = await supabase
+      .from("recipe_steps")
+      .select("step_order, step_description")
+      .eq("recipe_id", id)
+      .order("step_order", { ascending: true });
+
+    if (stepsError)
+      return res.status(500).json({ error: "조리 단계를 불러오지 못했습니다." });
+
+    // 4️⃣ 프론트에서 바로 사용할 수 있도록 통합
+    const recipeDetail = {
+      ...recipe,
+      ingredients,
+      steps
+    };
+
+    res.json(recipeDetail);
   } catch (err) {
-    console.error('recipes: unexpected error fetching detail', err)
-    res.status(500).json({ error: '서버 오류가 발생했습니다.' })
+    console.error("recipes: unexpected error fetching detail", err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
-}
+};
 
 /** 📌 검색/필터 기능 */
 export const searchRecipes = async (req, res) => {
