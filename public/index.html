@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>맛있는 코드</title>
-  
+
   <link rel="stylesheet" href="/css/page.css" />
   <link rel="stylesheet" href="/css/recipe_res_block.css" />
   <link rel="stylesheet" href="/css/index.css" />
@@ -15,17 +15,21 @@
 <header class="common-header">
   <div class="header-container">
     <div class="header-top">
-      <button id="authBtn" class="header-link" type="button">로그인 / 회원가입</button>
+      <!-- 🔥 로그인 / 회원가입 분리 -->
+      <button id="loginBtn" class="header-link" type="button">로그인</button>
+      <span style="color:#aaa; margin:0 4px;">|</span>
+      <button id="joinBtn" class="header-link" type="button">회원가입</button>
     </div>
+
     <div class="header-main">
       <div class="logo" onclick="location.href='/index.html'">
-        <img src="/img/icons/logo.png" alt="맛있는 코드" class="/logo-image" />
+        <img src="/img/icons/logo.png" alt="맛있는 코드" class="logo-image" />
       </div>
-      
+
       <div class="search-container">
-        <input 
-          id="headerSearchInput" 
-          type="search" 
+        <input
+          id="headerSearchInput"
+          type="search"
           placeholder="검색어를 입력하세요"
           class="search-input"
         />
@@ -33,17 +37,16 @@
           id="headerSearchIcon"
           src="/img/icons/search.png"
           alt="검색"
-          onclick="handleSearch()"
           class="search-icon"
         />
       </div>
-      
+
       <nav class="nav-menu">
         <button class="nav-button" onclick="location.href='/recipe_all.html'">레시피</button>
         <div class="nav-divider"></div>
         <button class="nav-button" onclick="location.href='/myplus.html'">재료등록</button>
       </nav>
-      
+
       <div class="header-icons">
         <img
           src="/img/icons/mypage.png"
@@ -62,32 +65,44 @@
   </div>
 </header>
 
-<script>
+<!-- 🔥 검색 실행 -->
+<script type="module">
+  import { API_BASE } from "/js/config.js";
+
   function handleSearch() {
     const searchInput = document.getElementById('headerSearchInput');
     const query = searchInput.value.trim();
-
-    if (query === '') {
+    if (!query) {
       location.href = '/recipe_search.html';
-    } else {
-      // localStorage에 검색어 저장
-      let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
-      recentSearches = recentSearches.filter(term => term !== query);
-      recentSearches.unshift(query);
-      if (recentSearches.length > 10) {
-        recentSearches = recentSearches.slice(0, 10);
-      }
-      localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
-      
-      const ingredients = query.replace(/\s+/g, ',');
-      location.href = `recipe_results.html?ingredients=${encodeURIComponent(ingredients)}`;
+      return;
     }
+
+    let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+    recentSearches = [query, ...recentSearches.filter(v => v !== query)].slice(0, 10);
+    localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+
+    const ingredients = query.replace(/\s+/g, ',');
+    location.href = `recipe_results.html?query=${encodeURIComponent(query)}&ingredients=${encodeURIComponent(ingredients)}`;
   }
+
+  // 검색 버튼 이벤트 등록
+  document.getElementById("headerSearchIcon").addEventListener("click", handleSearch);
+  document.getElementById("headerSearchInput").addEventListener("keypress", e => {
+    if (e.key === "Enter") handleSearch();
+  });
+
+  // 로그인 / 회원가입 버튼 이벤트
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    location.href = '/login.html';
+  });
+  document.getElementById("joinBtn").addEventListener("click", () => {
+    location.href = '/join.html';
+  });
 </script>
 
 <!-- 히어로 섹션 -->
 <section class="hero">
-  <img src="/img/icons/main banner.jpg" alt="메인 배너" class="hero-bg" />
+  <img src="/img/icons/main%20banner.jpg" alt="메인 배너" class="hero-bg" />
   <div class="hero-content">
     <h1>당신의 식탁을 더 생기있게</h1>
     <h2>오늘의 한 끼, 고민하지 마세요</h2>
@@ -105,9 +120,7 @@
       <h2>추천 레시피</h2>
       <a href="/recipe_all.html" class="more-link">전체보기 &gt;</a>
     </div>
-    <div class="card-grid" id="recipeGrid">
-      <!-- index.js에서 카드가 자동 생성됩니다 -->
-    </div>
+    <div class="card-grid" id="recipeGrid"></div>
   </div>
 </section>
 
@@ -135,8 +148,9 @@
   </div>
 </footer>
 
-<script src="/js/header.js"></script>
-<script src="/js/recipe_res_block.js"></script>
-<script src="/js/index.js"></script>
+<!-- 공통 스크립트 / 모듈 방식 -->
+<script type="module" src="/js/recipe_res_block.js"></script>
+<script type="module" src="/js/index.js"></script>
+
 </body>
 </html>
