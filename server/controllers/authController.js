@@ -71,20 +71,20 @@ export const signup = async (req, res) => {
    ========================================================= */
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { loginId, password } = req.body;
 
-    if (!email || !password)
-      return res.status(400).json({ error: "이메일과 비밀번호를 입력해주세요." });
+    if (!loginId || !password)
+      return res.status(400).json({ error: "아이디(이메일)와 비밀번호를 입력해주세요." });
 
-    // 이메일로 사용자 찾기
+    // 이메일 또는 아이디로 사용자 찾기
     const { data: userData, error: userErr } = await supabase
       .from("users")
       .select("*")
-      .eq("email", email)
+      .or(`email.eq.${loginId},username.eq.${loginId}`)
       .single();
 
     if (userErr || !userData)
-      return res.status(400).json({ error: "이메일 또는 비밀번호가 잘못되었습니다." });
+      return res.status(400).json({ error: "계정 정보를 찾을 수 없습니다." });
 
     // 비밀번호 비교
     const isMatch = await bcrypt.compare(password, userData.password_hash);
@@ -102,6 +102,49 @@ export const login = async (req, res) => {
     res.json({ message: "로그인 성공", token, user });
   } catch (err) {
     console.error("login: unexpected error", err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+};
+
+/* =========================================================
+   📌 중복 확인 (아이디 & 이메일)
+   ========================================================= */
+export const checkUsername = async (req, res) => {
+  try {
+    const { username } = req.query;
+    if (!username) return res.status(400).json({ error: "아이디를 입력해주세요." });
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("id")
+      .eq("username", username)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    res.json({ available: !data });
+  } catch (err) {
+    console.error("checkUsername error", err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
+  }
+};
+
+export const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ error: "이메일을 입력해주세요." });
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    res.json({ available: !data });
+  } catch (err) {
+    console.error("checkEmail error", err);
     res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
 };
