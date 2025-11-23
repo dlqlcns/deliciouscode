@@ -1,13 +1,15 @@
+import { API_BASE } from "./config.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
   const container = document.getElementById("recipeContainer");
-  const userId = localStorage.getItem("userId");
-  if (!userId) return;
+  const userId = JSON.parse(localStorage.getItem("user"))?.id;
+  if (!userId) return location.href = "/login.html";
 
   let allRecipes = [];
   let favoriteIds = [];
 
   // 사용자 정보 불러오기
-  const resUser = await fetch(`/api/users/${userId}`);
+  const resUser = await fetch(`${API_BASE}/users/${userId}`);
   if (!resUser.ok) {
     alert('사용자 정보를 불러올 수 없습니다.');
     return;
@@ -24,20 +26,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     ? user.allergies.map(tag => `<span class="tag">${tag}</span>`).join('')
     : '<p style="color:#495565;font-size:14px;">설정된 알레르기가 없습니다.</p>';
 
-  // 선호 카테고리
+  // 선호 카테고리 (preference → ingredients 로 백엔드 필드명 맞춤)
   const categoryTags = document.querySelector('.category-card .tags');
-  categoryTags.innerHTML = (user?.preferences?.length > 0)
-    ? user.preferences.map(cat => `<span class="category-tag">${cat}</span>`).join('')
+  categoryTags.innerHTML = (user?.ingredients?.length > 0)
+    ? user.ingredients.map(cat => `<span class="category-tag">${cat}</span>`).join('')
     : '<p style="color:#495565;font-size:14px;">설정된 선호 카테고리가 없습니다.</p>';
 
   // 재료 표시
-  displayIngredients(user?.ingredients || {});
+  displayIngredients(user?.ingredientsData || {});
 
   // 즐겨찾기 로드
-  const resFavs = await fetch(`/api/favorites/${userId}`);
+  const resFavs = await fetch(`${API_BASE}/favorites/${userId}`);
   favoriteIds = await resFavs.json();
 
-  const resRecipes = await fetch('/api/recipes');
+  const resRecipes = await fetch(`${API_BASE}/recipes`);
   allRecipes = await resRecipes.json();
 
   renderRecipes();
@@ -96,34 +98,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     attachBookmarkListeners();
   }
 
-  function createRecipeBlock(recipe) {
-    const block = document.createElement('article');
-    block.className = 'recipe-res-block';
-    block.innerHTML = `
-      <a href="recipe_detail.html?id=${recipe.id}" class="recipe-link">
-        <div class="recipe-image-box" style="background-image:url('${recipe.image_url}')">
-          <button class="bookmark-btn bookmarked" data-id="${recipe.id}">♥</button>
-        </div>
-        <div class="recipe-content">
-          <h3>${recipe.name}</h3>
-          <p class="recipe-category">${recipe.category}</p>
-          <p class="recipe-desc-short">${recipe.description}</p>
-          <div class="recipe-time">
-            <img src="/img/icons/timer.png" alt="시간" class="time-icon"/>
-            <span>${recipe.time}</span>
-          </div>
-        </div>
-      </a>
-    `;
-    return block;
-  }
-
   async function toggleBookmark(id) {
-    await fetch('/api/favorites', {
-      method: 'DELETE',
+    await fetch(`${API_BASE}/favorites`, {
+      method: "DELETE",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: userId, recipe_id: id })
     });
+
     favoriteIds = favoriteIds.filter(fid => fid !== id);
     renderRecipes();
   }
