@@ -23,6 +23,10 @@ app.use(`${API_PREFIX}/favorites`, favoriteRoutes)
 app.use(`${API_PREFIX}/users`, userRoutes)
 app.use(`${API_PREFIX}/food`, foodRoute);
 
+app.get('/', (req, res) => {
+  res.send("Backend running")
+})
+
 // 기본 404 처리
 app.use((req, res) => {
   res.status(404).json({ error: '요청하신 경로를 찾을 수 없습니다.' })
