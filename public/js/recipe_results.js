@@ -43,6 +43,9 @@ function renderRecipes(recipes) {
   if (!recipeList) return;
   recipeList.innerHTML = "";
 
+   document.getElementById('resultsSubtitle').textContent =
+  `총 ${recipes.length}개의 레시피가 검색되었습니다.`;
+
   if (!recipes.length) {
     recipeList.innerHTML =
       `<p style="text-align:center;color:#888;font-size:1.1rem;padding:20px;">
@@ -62,3 +65,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   currentRecipes = await fetchSearchResults();
   renderRecipes(currentRecipes);
 });
+
