@@ -1,19 +1,20 @@
 import { supabase } from '../supabaseClient.js'
 
-/** 📌 추천 레시피 */
+/** 📌 추천 레시피 가져오기 */
 export const getRecommendedRecipes = async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('recipes')
-      .select('id, name, category, time, image_url')
-      .order('id', { ascending: false })
-      .limit(5);
+      .select('id, name, category, time, image_url, description')
+      .order('id', { ascending: true })
+      .limit(5);  // ⭐ 여기서 5개만 가져오도록 보장
 
     if (error) return res.status(500).json({ error: error.message });
+
     res.json(data);
   } catch (err) {
-    console.error('recipes: recommended error', err);
-    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+    console.error("recipes: unexpected error fetching recommended", err);
+    res.status(500).json({ error: "서버 오류가 발생했습니다." });
   }
 };
 
