@@ -1,25 +1,27 @@
+import { API_BASE } from "./config.js";
+
 async function fetchJSON(url) {
-  const res = await fetch(url)
-  return await res.json()
+  const res = await fetch(url);
+  return await res.json();
 }
 
 // 추천 레시피 렌더링
 async function renderRecommended() {
-  const container = document.getElementById('recommended-container')
-  container.innerHTML = ''
+  const container = document.getElementById('recommended-container');
+  container.innerHTML = '';
 
-  const recipes = await fetchJSON('/api/recipes/recommended')
+  const recipes = await fetchJSON(`${API_BASE}/recipes/recommended`);
 
   recipes.forEach(recipe => {
-    const card = document.createElement('div')
-    card.className = 'recipe-card'
+    const card = document.createElement('div');
+    card.className = 'recipe-card';
     card.innerHTML = `
       <h3>${recipe.name}</h3>
       <p>카테고리: ${recipe.category}</p>
       <p>소요시간: ${recipe.time}</p>
-    `
-    container.appendChild(card)
-  })
+    `;
+    container.appendChild(card);
+  });
 }
 
 // 전체 레시피 카드 렌더링
@@ -29,7 +31,7 @@ async function renderRecipeCards() {
 
   recipeGrid.innerHTML = ''
 
-  const recipes = await fetchJSON('/api/recipes')
+  const recipes = await fetchJSON(`${API_BASE}/recipes`)
 
   recipes.forEach(recipe => {
     const card = createRecipeBlock(recipe)
@@ -87,3 +89,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderRecipeCards()
   setupSearchHandlers()
 })
+
