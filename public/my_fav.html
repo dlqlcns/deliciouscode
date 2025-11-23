@@ -17,25 +17,15 @@
     <div class="header-top">
       <button id="authBtn" class="header-link" type="button">로그인 / 회원가입</button>
     </div>
+
     <div class="header-main">
       <div class="logo" onclick="location.href='/index.html'">
         <img src="/img/icons/logo.png" alt="맛있는 코드" class="logo-image" />
       </div>
       
       <div class="search-container">
-        <input 
-          id="headerSearchInput" 
-          type="search" 
-          placeholder="검색어를 입력하세요"
-          class="search-input"
-        />
-        <img
-          id="headerSearchIcon"
-          src="/img/icons/search.png"
-          alt="검색"
-          onclick="handleSearch()"
-          class="search-icon"
-        />
+        <input id="headerSearchInput" type="search" placeholder="검색어를 입력하세요" class="search-input" />
+        <img id="headerSearchIcon" src="/img/icons/search.png" alt="검색" onclick="handleSearch()" class="search-icon" />
       </div>
       
       <nav class="nav-menu">
@@ -45,18 +35,8 @@
       </nav>
       
       <div class="header-icons">
-        <img
-          src="/img/icons/mypage.png"
-          alt="마이페이지"
-          onclick="location.href='/mypage.html'"
-          class="icon-image"
-        />
-        <img
-          src="/img/icons/bookmark.png"
-          alt="북마크"
-          onclick="location.href='/my_fav.html'"
-          class="icon-image"
-        />
+        <img src="/img/icons/mypage.png" alt="마이페이지" onclick="location.href='/mypage.html'" class="icon-image" />
+        <img src="/img/icons/bookmark.png" alt="북마크" onclick="location.href='/my_fav.html'" class="icon-image" />
       </div>
     </div>
   </div>
@@ -66,35 +46,22 @@
   function handleSearch() {
     const searchInput = document.getElementById('headerSearchInput');
     const query = searchInput.value.trim();
+    if (!query) return (location.href = '/recipe_search.html');
 
-    if (query === '') {
-      location.href = 'recipe_search.html';
-    } else {
-      const ingredients = query.replace(/\s+/g, ',');
-      location.href = `recipe_results.html?ingredients=${encodeURIComponent(ingredients)}`;
-    }
+    const ingredients = query.replace(/\s+/g, ',');
+    location.href = `/recipe_results.html?ingredients=${encodeURIComponent(ingredients)}`;
   }
 </script>
 
 <main class="my_fav-main">
   <div class="my_fav-header">
-    <h1 id="resultsTitle" class="my_fav-title">레시피 즐겨찾기</h1>
-    <p id="resultsSubtitle" class="my_fav-subtitle">저장한 레시피를 관리하고 확인하세요.</p>
+    <h1 class="my_fav-title">레시피 즐겨찾기</h1>
+    <p class="my_fav-subtitle">저장한 레시피를 관리하고 확인하세요.</p>
 
     <div class="search-and-filter">
       <div class="search-containerr">
-        <input 
-          id="favSearchInput"
-          type="search" 
-          placeholder="레시피 이름이나 설명으로 검색..."
-          class="search-input"
-        />
-        <img
-          id="favSearchIcon"
-          src="/img/icons/search.png"
-          alt="검색"
-          class="search-icon"
-        />
+        <input id="favSearchInput" type="search" placeholder="레시피 이름이나 설명으로 검색..." class="search-input" />
+        <img id="favSearchIcon" src="/img/icons/search.png" alt="검색" class="search-icon" />
       </div>
 
       <div class="filter-sort-bar">
@@ -108,6 +75,7 @@
           <option>동남아</option>
           <option>샐러드</option>
         </select>
+
         <select class="select-box" id="sortSelect">
           <option>최신순</option>
           <option>이름순</option>
@@ -117,6 +85,7 @@
     </div>
   </div>
 
+  <!-- 📌 my_fav.js에서 동적으로 카드가 채워짐 -->
   <section class="recipe-list grid-view" id="recipeList"></section>
 </main>
 
@@ -124,7 +93,7 @@
   <div class="footer-divider"></div>
   <div class="footer-content">
     <div class="footer-top">
-      <div class="logo footer-logo" onclick="location.href='/home_index.html'">
+      <div class="logo footer-logo" onclick="location.href='/index.html'">
         <img src="/img/icons/logo.png" alt="맛있는 코드" class="logo-image" />
       </div>
       <nav class="footer-nav">
@@ -143,9 +112,9 @@
   </div>
 </footer>
 
-<!-- ✅ 공통 컴포넌트를 먼저 로드 -->
-<script src="/js/header.js"></script>
-<script src="/js/recipe_res_block.js"></script>
-<script src="/js/my_fav.js"></script>
+<!-- JS 로드 순서: header → 레시피 카드 컴포넌트 → 즐겨찾기 기능 -->
+<script type="module" src="/js/header.js"></script>
+<script type="module" src="/js/recipe_res_block.js"></script>
+<script type="module" src="/js/my_fav.js"></script>
 </body>
 </html>
